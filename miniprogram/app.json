@@ -1,0 +1,15 @@
+{
+  "pages": [
+    "pages/index/index"
+  ],
+  "window": {
+    "backgroundColor": "#F1E7D1",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#8F100D",
+    "navigationBarTitleText": "傩映幽光，福佑四方",
+    "navigationBarTextStyle": "white"
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents"
+}

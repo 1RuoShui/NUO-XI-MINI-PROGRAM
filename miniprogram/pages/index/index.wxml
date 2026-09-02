@@ -1,0 +1,49 @@
+<view class="page">
+  <image class="bg-image" src="../../images/nuo-mask-gold.png" mode="aspectFill" />
+  <view class="header"><text>{{tabs[current].label}}</text></view>
+  <view class="content">
+    <block wx:if="{{current == 0}}">
+      <view class="home-intro"><text class="home-brand">傩艺</text><text class="home-tagline">撷傩面古纹，赴非遗新章</text><text class="home-note">以面载道，以艺传心</text></view>
+      <view class="search"><input placeholder="搜索商品或内容" bindinput="onSearch"/><button bindtap="search">搜索</button></view>
+      <view class="quick-links"><view class="quick-link" data-target="1" bindtap="goToTab"><text class="quick-icon">文</text><text>探索傩文化</text></view><view class="quick-link" data-target="2" bindtap="goToTab"><text class="quick-icon">集</text><text>逛傩韵集</text></view><view class="quick-link" data-target="3" bindtap="goToTab"><text class="quick-icon">友</text><text>进入社区</text></view></view>
+      <swiper class="hero" indicator-dots circular><swiper-item><image src="../../images/nuo-mask-gold.png" mode="aspectFill"/></swiper-item></swiper>
+      <view class="home-section-head"><text class="section-title">精选傩艺</text><text class="section-more" data-target="2" bindtap="goToTab">查看全部 ›</text></view>
+      <view class="products"><view class="product" wx:for="{{homeProducts}}" wx:key="name"><image src="{{item.image}}" mode="aspectFill"/><text class="name">{{item.name}}</text><text class="price">￥{{item.price}}</text></view></view>
+      <view class="home-section-head"><text class="section-title">今日发现</text><text class="section-more" data-target="1" bindtap="goToTab">查看全部 ›</text></view><view class="home-article-list"><view class="home-article" wx:for="{{homeArticles}}" wx:key="title" data-index="{{index}}" bindtap="openArticle"><text class="home-article-title">{{item.title}}</text><text class="date">{{item.date}}</text></view></view>
+      <view class="home-section-head"><text class="section-title">社区动态</text><text class="section-more" data-target="3" bindtap="goToTab">进入社区 ›</text></view><view class="home-community" wx:for="{{homePosts}}" wx:key="id" data-target="3" bindtap="goToTab"><text class="home-post-title">{{item.title}}</text><text class="home-post-meta">{{item.author}} · {{item.date}} · {{item.commentList.length}} 条评论</text></view>
+    </block>
+
+    <block wx:if="{{current == 1}}">
+      <view wx:if="{{!articleDetail}}" class="discover">
+        <view class="module-intro"><text class="module-title">傩文化发现</text><text class="module-subtitle">从一幅面具，读懂一段非遗故事</text></view>
+        <view class="articles"><view class="article" wx:for="{{articles}}" wx:key="title" data-index="{{index}}" bindtap="openArticle"><view class="article-main"><text class="article-title">{{item.title}}</text><text class="article-excerpt">{{item.excerpt}}</text><text class="date">{{item.date}}</text></view><text class="article-arrow">›</text></view></view>
+      </view>
+      <view wx:else class="article-detail">
+        <view class="detail-nav"><text bindtap="closeArticle">‹ 返回发现</text><text wx:if="{{selectedArticle.favorite}}" class="favorite active" bindtap="toggleFavorite">已收藏</text><text wx:else class="favorite" bindtap="toggleFavorite">收藏</text></view>
+        <text class="detail-title">{{selectedArticle.title}}</text><text class="detail-date">{{selectedArticle.date}}</text>
+        <image class="detail-cover" src="../../images/nuo-mask-gold.png" mode="aspectFill"/>
+        <view class="detail-body"><view wx:for="{{selectedArticle.paragraphs}}" wx:key="index" class="detail-paragraph">{{item}}</view></view>
+      </view>
+    </block>
+
+    <block wx:if="{{current == 2}}">
+      <view class="shop-banner"><text class="shop-title">傩韵集</text><text class="shop-subtitle">撷傩面古纹，赴非遗新章</text></view>
+      <view class="search"><input placeholder="搜索商品" bindinput="onSearch"/><button bindtap="search">搜索</button></view>
+      <scroll-view class="categories" scroll-x><view wx:for="{{shopCategories}}" wx:key="*this" class="category-item" data-category="{{item}}" bindtap="selectCategory"><text wx:if="{{activeCategory == item}}" class="selected-dot">● </text>{{item}}</view></scroll-view>
+      <view class="shop-products"><view class="product shop-product" wx:for="{{visibleProducts}}" wx:key="name"><image src="{{item.image}}" mode="aspectFill"/><view class="product-info"><text class="category-tag">{{item.category}}</text><text class="name">{{item.name}}</text><text class="description">{{item.description}}</text><view class="product-bottom"><text class="value">￥{{item.price}}</text><button bindtap="showProduct" data-name="{{item.name}}">详情</button></view></view></view></view>
+    </block>
+
+    <block wx:if="{{current == 3}}">
+      <view class="community"><view class="module-intro"><text class="module-title">傩友交流</text><text class="module-subtitle">分享你的傩文化见闻与创作</text></view>
+        <view class="posts"><view class="post" wx:for="{{posts}}" wx:key="id"><view class="post-title">{{item.author}} <text class="date">{{item.date}}</text></view><text class="post-text">{{item.title}}</text><view wx:if="{{item.images.length}}" class="post-images"><image wx:for="{{item.images}}" wx:key="*this" src="{{item}}" mode="aspectFill"/></view><view class="comment-list"><view wx:for="{{item.commentList}}" wx:key="index" class="comment"><text class="comment-author">{{item.author}}：</text>{{item.text}}</view></view><view class="comment-input"><input placeholder="写下你的评论..." value="{{commentDrafts[index] || ''}}" data-index="{{index}}" bindinput="onCommentInput" bindconfirm="addComment" confirm-type="send"/><button data-index="{{index}}" bindtap="addComment">发送</button></view></view></view>
+        <view class="compose"><text class="compose-title">分享这一刻</text><textarea value="{{composeText}}" placeholder="说说你对傩戏文化的见闻、感受或创作..." maxlength="500" bindinput="onComposeInput"></textarea><view wx:if="{{composeImages.length}}" class="compose-images"><view wx:for="{{composeImages}}" wx:key="*this" class="compose-image"><image src="{{item}}" mode="aspectFill"/><text data-index="{{index}}" bindtap="removeComposeImage">×</text></view></view><view class="compose-actions"><button bindtap="choosePostImage">＋ 图片</button><button class="publish" bindtap="publishPost">发布</button></view></view>
+      </view>
+    </block>
+
+    <block wx:if="{{current == 4}}">
+      <view wx:if="{{isLoggedIn}}" class="profile"><image src="{{avatarDisplay}}" class="profile-avatar"/><text class="welcome">傩艺体验员</text><text class="profile-account">{{loggedAccount}}</text><text>欢迎回来，继续探索非遗魅力</text><button class="avatar-button" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">设置头像</button><button class="logout-button" bindtap="logout">退出登录</button></view>
+      <view wx:else class="auth-page"><view class="auth-brand">傩艺</view><text class="auth-subtitle">登录后收藏内容，参与傩友交流</text><view class="auth-tabs"><text wx:if="{{authMode == 'login'}}" class="auth-tab auth-active" bindtap="switchAuthMode" data-mode="login">账号登录</text><text wx:else class="auth-tab" bindtap="switchAuthMode" data-mode="login">账号登录</text><text wx:if="{{authMode == 'register'}}" class="auth-tab auth-active" bindtap="switchAuthMode" data-mode="register">注册账号</text><text wx:else class="auth-tab" bindtap="switchAuthMode" data-mode="register">注册账号</text></view><input class="auth-input" placeholder="请输入账号" value="{{authAccount}}" data-field="authAccount" bindinput="onAuthInput"/><input class="auth-input" placeholder="请输入密码（至少 6 位）" password value="{{authPassword}}" data-field="authPassword" bindinput="onAuthInput"/><input wx:if="{{authMode == 'register'}}" class="auth-input" placeholder="请再次输入密码" password value="{{authConfirmPassword}}" data-field="authConfirmPassword" bindinput="onAuthInput"/><button class="auth-submit" bindtap="submitAuth"><text wx:if="{{authMode == 'login'}}">登录</text><text wx:else>注册并登录</text></button><button wx:if="{{authMode == 'login'}}" class="wechat-submit" bindtap="wechatLogin">微信快捷登录</button><text wx:if="{{authMessage}}" class="auth-message">{{authMessage}}</text><text class="auth-tip">云服务未配置时，账号仅保存在当前设备</text></view>
+    </block>
+  </view>
+  <view class="tabbar"><view wx:for="{{tabs}}" wx:key="label" class="tab" data-index="{{index}}" bindtap="switchTab"><image class="tab-icon" src="{{item.icon}}" mode="aspectFit"/><text>{{item.label}}</text></view></view>
+</view>
