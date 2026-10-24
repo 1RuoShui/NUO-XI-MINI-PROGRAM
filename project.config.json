@@ -45,8 +45,8 @@
     "disableSWC": true
   },
   "appid": "wxdcd2e82bf93ebf27",
-  "projectname": "quickstart-wx-cloud",
-  "libVersion": "2.20.1",
+  "projectname": "nuoyi-xiaochengxu",
+  "libVersion": "3.17.2",
   "cloudfunctionTemplateRoot": "cloudfunctionTemplate/",
   "condition": {
     "search": {
@@ -62,19 +62,38 @@
       "list": []
     },
     "miniprogram": {
-      "list": [
-        {
-          "id": -1,
-          "name": "db guide",
-          "pathName": "pages/databaseGuide/databaseGuide"
-        }
-      ]
+      "list": []
     }
   },
   "compileType": "miniprogram",
   "srcMiniprogramRoot": "miniprogram/",
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      {
+        "type": "folder",
+        "value": "images/products"
+      },
+      {
+        "type": "file",
+        "value": "images/nuo-mask-gold.jpg"
+      },
+      {
+        "type": "file",
+        "value": "images/avatar.png"
+      },
+      {
+        "type": "file",
+        "value": "images/artwork/brush.png"
+      },
+      {
+        "type": "file",
+        "value": "images/artwork/red-panel.png"
+      },
+      {
+        "type": "file",
+        "value": "images/artwork/performer.png"
+      }
+    ],
     "include": []
   },
   "editorSetting": {

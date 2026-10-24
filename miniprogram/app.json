@@ -3,11 +3,11 @@
     "pages/index/index"
   ],
   "window": {
-    "backgroundColor": "#F1E7D1",
+    "backgroundColor": "#f6f2eb",
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#8F100D",
-    "navigationBarTitleText": "傩映幽光，福佑四方",
-    "navigationBarTextStyle": "white"
+    "navigationBarBackgroundColor": "#f6f2eb",
+    "navigationBarTitleText": "傩艺 · 傩韵新生",
+    "navigationBarTextStyle": "black"
   },
   "sitemapLocation": "sitemap.json",
   "style": "v2",
