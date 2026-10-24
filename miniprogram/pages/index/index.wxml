@@ -1,49 +1,481 @@
 <view class="page">
-  <image class="bg-image" src="../../images/nuo-mask-gold.png" mode="aspectFill" />
-  <view class="header"><text>{{tabs[current].label}}</text></view>
+  <view class="topbar">
+    <view class="topbar-brand">
+      <text class="seal">傩</text>
+      <view>
+        <text class="brand-name">傩艺</text>
+        <text class="brand-sub">一面千年 · 傩韵新生</text>
+      </view>
+    </view>
+    <text class="topbar-label">{{tabs[current].label}}</text>
+  </view>
+
   <view class="content">
     <block wx:if="{{current == 0}}">
-      <view class="home-intro"><text class="home-brand">傩艺</text><text class="home-tagline">撷傩面古纹，赴非遗新章</text><text class="home-note">以面载道，以艺传心</text></view>
-      <view class="search"><input placeholder="搜索商品或内容" bindinput="onSearch"/><button bindtap="search">搜索</button></view>
-      <view class="quick-links"><view class="quick-link" data-target="1" bindtap="goToTab"><text class="quick-icon">文</text><text>探索傩文化</text></view><view class="quick-link" data-target="2" bindtap="goToTab"><text class="quick-icon">集</text><text>逛傩韵集</text></view><view class="quick-link" data-target="3" bindtap="goToTab"><text class="quick-icon">友</text><text>进入社区</text></view></view>
-      <swiper class="hero" indicator-dots circular><swiper-item><image src="../../images/nuo-mask-gold.png" mode="aspectFill"/></swiper-item></swiper>
-      <view class="home-section-head"><text class="section-title">精选傩艺</text><text class="section-more" data-target="2" bindtap="goToTab">查看全部 ›</text></view>
-      <view class="products"><view class="product" wx:for="{{homeProducts}}" wx:key="name"><image src="{{item.image}}" mode="aspectFill"/><text class="name">{{item.name}}</text><text class="price">￥{{item.price}}</text></view></view>
-      <view class="home-section-head"><text class="section-title">今日发现</text><text class="section-more" data-target="1" bindtap="goToTab">查看全部 ›</text></view><view class="home-article-list"><view class="home-article" wx:for="{{homeArticles}}" wx:key="title" data-index="{{index}}" bindtap="openArticle"><text class="home-article-title">{{item.title}}</text><text class="date">{{item.date}}</text></view></view>
-      <view class="home-section-head"><text class="section-title">社区动态</text><text class="section-more" data-target="3" bindtap="goToTab">进入社区 ›</text></view><view class="home-community" wx:for="{{homePosts}}" wx:key="id" data-target="3" bindtap="goToTab"><text class="home-post-title">{{item.title}}</text><text class="home-post-meta">{{item.author}} · {{item.date}} · {{item.commentList.length}} 条评论</text></view>
+      <view class="home-hero-intro">
+        <text class="eyebrow">非遗数字化文化品牌</text>
+        <text class="home-title">让古老的傩，<text class="accent">被看见</text>
+        </text>
+        <text class="home-copy">从一张面具开始，探索传统、科技与日常生活的连接。</text>
+      </view>
+      <view class="search-bar">
+        <text class="search-icon">⌕</text>
+        <input value="{{keyword}}" placeholder="搜索傩文化、文创或话题" bindinput="onSearchInput" confirm-type="search" bindconfirm="search"
+        />
+        <text wx:if="{{keyword}}" class="clear" bindtap="clearSearch">×</text>
+        <button bindtap="search">搜索</button>
+      </view>
+      <view wx:if="{{searched}}" class="search-result">
+        <view class="result-head">
+          <text>搜索结果</text>
+          <text class="muted">{{resultCount}} 条相关内容</text>
+        </view>
+        <view wx:if="{{searchArticles.length}}" class="result-group">
+          <text class="result-label">发现</text>
+          <view wx:for="{{searchArticles}}" wx:key="id" class="result-row" data-id="{{item.id}}" bindtap="openArticle">
+            <text>{{item.title}}</text>
+            <text class="arrow">›</text>
+          </view>
+        </view>
+        <view wx:if="{{searchProducts.length}}" class="result-group">
+          <text class="result-label">商铺</text>
+          <view wx:for="{{searchProducts}}" wx:key="id" class="result-row" data-id="{{item.id}}" bindtap="showProduct">
+            <text>{{item.name}}</text>
+            <text class="arrow">›</text>
+          </view>
+        </view>
+        <view wx:if="{{searchPosts.length}}" class="result-group">
+          <text class="result-label">社区</text>
+          <view wx:for="{{searchPosts}}" wx:key="id" class="result-row" data-id="{{item.id}}" bindtap="goToTab" data-target="3">
+            <text>{{item.title}}</text>
+            <text class="arrow">›</text>
+          </view>
+        </view>
+        <text wx:if="{{!resultCount}}" class="empty">没有找到相关内容，试试“面具”“灯”或“手作”。</text>
+      </view>
+      <block wx:else>
+        <swiper class="hero-swiper" indicator-dots="true" indicator-color="rgba(255,255,255,.45)" indicator-active-color="#e9bc56"
+          circular autoplay interval="4500">
+          <swiper-item wx:for="{{heroes}}" wx:key="id" data-id="{{item.id}}" bindtap="openArticle">
+            <image src="{{item.image}}" mode="aspectFill" />
+            <view class="hero-shade">
+            </view>
+            <view class="hero-caption">
+              <text class="hero-label">{{item.label}}</text>
+              <text class="hero-title">{{item.title}}</text>
+              <text class="hero-subtitle">{{item.subtitle}}</text>
+              <text class="hero-link">进入专题 ›</text>
+            </view>
+          </swiper-item>
+        </swiper>
+        <view class="quick-grid">
+          <view class="quick-card" data-target="1" bindtap="goToTab">
+            <text class="quick-number">01</text>
+            <text class="quick-title">探索傩文化</text>
+            <text class="quick-note">读故事，看纹样</text>
+          </view>
+          <view class="quick-card" data-target="2" bindtap="goToTab">
+            <text class="quick-number">02</text>
+            <text class="quick-title">逛傩韵集</text>
+            <text class="quick-note">把灵感带回家</text>
+          </view>
+          <view class="quick-card" data-target="3" bindtap="goToTab">
+            <text class="quick-number">03</text>
+            <text class="quick-title">进入社区</text>
+            <text class="quick-note">分享你的观察</text>
+          </view>
+        </view>
+        <view class="section-heading">
+          <view>
+            <text class="section-kicker">CURATED</text>
+            <text class="section-title">精选傩艺</text>
+          </view>
+          <text class="more" data-target="2" bindtap="goToTab">查看全部 ›</text>
+        </view>
+        <view class="product-grid home-product-grid">
+          <view class="product-card" wx:for="{{homeProducts}}" wx:key="id" data-id="{{item.id}}" bindtap="showProduct">
+            <image src="{{item.image}}" mode="aspectFill" />
+            <view class="product-card-info">
+              <text class="product-tag">{{item.tag}}</text>
+              <text class="product-name">{{item.name}}</text>
+              <text class="product-price">{{item.priceLabel}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="section-heading">
+          <view>
+            <text class="section-kicker">DISCOVER</text>
+            <text class="section-title">今日发现</text>
+          </view>
+          <text class="more" data-target="1" bindtap="goToTab">阅读更多 ›</text>
+        </view>
+        <view class="home-article" wx:for="{{homeArticles}}" wx:key="id" data-id="{{item.id}}" bindtap="openArticle">
+          <image src="{{item.image}}" mode="aspectFill" />
+          <view>
+            <text class="article-category">{{item.category}} · {{item.readTime}}</text>
+            <text class="home-article-title">{{item.title}}</text>
+            <text class="home-article-excerpt">{{item.excerpt}}</text>
+          </view>
+          <text class="arrow">›</text>
+        </view>
+        <view class="home-community">
+          <view class="section-heading compact">
+            <view>
+              <text class="section-kicker">COMMUNITY</text>
+              <text class="section-title">社区一刻</text>
+            </view>
+            <text class="more" data-target="3" bindtap="goToTab">去看看 ›</text>
+          </view>
+          <view wx:for="{{homePosts}}" wx:key="id" data-target="3" bindtap="goToTab">
+            <text class="home-post-title">{{item.title}}</text>
+            <text class="home-post-meta">{{item.topic}} · {{item.date}}</text>
+          </view>
+        </view>
+      </block>
     </block>
 
     <block wx:if="{{current == 1}}">
-      <view wx:if="{{!articleDetail}}" class="discover">
-        <view class="module-intro"><text class="module-title">傩文化发现</text><text class="module-subtitle">从一幅面具，读懂一段非遗故事</text></view>
-        <view class="articles"><view class="article" wx:for="{{articles}}" wx:key="title" data-index="{{index}}" bindtap="openArticle"><view class="article-main"><text class="article-title">{{item.title}}</text><text class="article-excerpt">{{item.excerpt}}</text><text class="date">{{item.date}}</text></view><text class="article-arrow">›</text></view></view>
+      <view wx:if="{{detail == 'article'}}" class="article-detail">
+        <view class="detail-top">
+          <text bindtap="closeDetail">‹ 返回</text>
+          <text class="favorite" bindtap="toggleFavorite">{{selectedArticle.favorite ? '★ 已收藏' : '☆ 收藏'}}</text>
+        </view>
+        <image class="detail-image" src="{{selectedArticle.image}}" mode="aspectFill" />
+        <text class="detail-category">{{selectedArticle.category}} · {{selectedArticle.readTime}}</text>
+        <text class="detail-title">{{selectedArticle.title}}</text>
+        <text class="detail-excerpt">{{selectedArticle.excerpt}}</text>
+        <view wx:for="{{selectedArticle.sections}}" wx:key="title" class="detail-section">
+          <text class="detail-section-title">{{item.title}}</text>
+          <text class="detail-paragraph">{{item.text}}</text>
+        </view>
+        <view class="detail-source">内容为傩艺文化导览与项目设计参考，具体地域传统请以当地传承与现场讲解为准。</view>
       </view>
-      <view wx:else class="article-detail">
-        <view class="detail-nav"><text bindtap="closeArticle">‹ 返回发现</text><text wx:if="{{selectedArticle.favorite}}" class="favorite active" bindtap="toggleFavorite">已收藏</text><text wx:else class="favorite" bindtap="toggleFavorite">收藏</text></view>
-        <text class="detail-title">{{selectedArticle.title}}</text><text class="detail-date">{{selectedArticle.date}}</text>
-        <image class="detail-cover" src="../../images/nuo-mask-gold.png" mode="aspectFill"/>
-        <view class="detail-body"><view wx:for="{{selectedArticle.paragraphs}}" wx:key="index" class="detail-paragraph">{{item}}</view></view>
+      <view wx:else class="discover-page">
+        <view class="page-intro">
+          <text class="page-kicker">DISCOVER THE CULTURE</text>
+          <text class="page-title">发现傩文化</text>
+          <text class="page-subtitle">从面具、手作到数字创意，给好奇心一条清晰的路。</text>
+        </view>
+        <scroll-view class="chips" scroll-x>
+          <view wx:for="{{articleCategories}}" wx:key="*this" class="chip {{articleCategory == item ? 'chip-active' : ''}}" data-value="{{item}}"
+            bindtap="selectArticleCategory">{{item}}</view>
+        </scroll-view>
+        <view class="article-list">
+          <view wx:for="{{visibleArticles}}" wx:key="id" class="article-card" data-id="{{item.id}}" bindtap="openArticle">
+            <image src="{{item.image}}" mode="aspectFill" />
+            <view class="article-card-body">
+              <text class="article-category">{{item.category}} · {{item.readTime}}</text>
+              <text class="article-card-title">{{item.title}}</text>
+              <text class="article-card-excerpt">{{item.excerpt}}</text>
+              <view class="article-card-foot">
+                <text>专题阅读</text>
+                <text class="arrow">›</text>
+              </view>
+            </view>
+          </view>
+          <view wx:if="{{!visibleArticles.length}}" class="empty">暂无这个分类的专题。</view>
+        </view>
+        <view class="discover-note">
+          <text class="note-mark">✦</text>
+          <view>
+            <text>为什么要读这些故事？</text>
+            <text>让文化不止停留在展柜里，也进入我们的观察、创作和生活。</text>
+          </view>
+        </view>
       </view>
     </block>
 
     <block wx:if="{{current == 2}}">
-      <view class="shop-banner"><text class="shop-title">傩韵集</text><text class="shop-subtitle">撷傩面古纹，赴非遗新章</text></view>
-      <view class="search"><input placeholder="搜索商品" bindinput="onSearch"/><button bindtap="search">搜索</button></view>
-      <scroll-view class="categories" scroll-x><view wx:for="{{shopCategories}}" wx:key="*this" class="category-item" data-category="{{item}}" bindtap="selectCategory"><text wx:if="{{activeCategory == item}}" class="selected-dot">● </text>{{item}}</view></scroll-view>
-      <view class="shop-products"><view class="product shop-product" wx:for="{{visibleProducts}}" wx:key="name"><image src="{{item.image}}" mode="aspectFill"/><view class="product-info"><text class="category-tag">{{item.category}}</text><text class="name">{{item.name}}</text><text class="description">{{item.description}}</text><view class="product-bottom"><text class="value">￥{{item.price}}</text><button bindtap="showProduct" data-name="{{item.name}}">详情</button></view></view></view></view>
+      <view wx:if="{{detail == 'product'}}" class="product-detail">
+        <view class="detail-top">
+          <text bindtap="closeDetail">‹ 返回</text>
+          <text class="cart-link" bindtap="openCart">选购清单 {{cartCount ? '(' + cartCount + ')' : ''}}</text>
+        </view>
+        <image class="product-detail-image" src="{{selectedProduct.image}}" mode="aspectFit" />
+        <text class="product-detail-tag">{{selectedProduct.tag}}</text>
+        <text class="product-detail-title">{{selectedProduct.name}}</text>
+        <text class="product-detail-price">{{selectedProduct.priceLabel}}</text>
+        <text class="product-detail-desc">{{selectedProduct.description}}</text>
+        <text class="subheading">选择规格</text>
+        <view class="specs">
+          <text wx:for="{{selectedProduct.specs}}" wx:key="*this" class="spec {{selectedSpec == item ? 'spec-active' : ''}}" data-value="{{item}}"
+            bindtap="selectSpec">{{item}}</text>
+        </view>
+        <view class="quantity">
+          <text>数量</text>
+          <view>
+            <text class="quantity-button" data-delta="-1" bindtap="changeQuantity">−</text>
+            <text class="quantity-number">{{quantity}}</text>
+            <text class="quantity-button" data-delta="1" bindtap="changeQuantity">＋</text>
+          </view>
+        </view>
+        <button class="primary-button" bindtap="addToCart">加入选购清单</button>
+        <view class="detail-copy">
+          <text class="subheading">设计说明</text>
+          <view wx:for="{{selectedProduct.details}}" wx:key="*this">
+            <text class="detail-paragraph">{{item}}</text>
+          </view>
+        </view>
+      </view>
+      <view wx:elif="{{detail == 'cart'}}" class="cart-page">
+        <view class="detail-top">
+          <text bindtap="closeDetail">‹ 返回</text>
+          <text>共 {{cartCount}} 件</text>
+        </view>
+        <text class="page-title small-title">选购清单</text>
+        <text class="cart-tip">这里记录你的兴趣，不会自动下单或扣款。</text>
+        <view wx:for="{{cart}}" wx:key="key" class="cart-row">
+          <image src="{{item.image}}" mode="aspectFill" />
+          <view class="cart-info">
+            <text>{{item.name}}</text>
+            <text class="cart-spec">{{item.spec}} · {{item.priceLabel}}</text>
+            <view class="cart-controls">
+              <text class="quantity-button" data-key="{{item.key}}" data-delta="-1" bindtap="changeCartQuantity">−</text>
+              <text>{{item.quantity}}</text>
+              <text class="quantity-button" data-key="{{item.key}}" data-delta="1" bindtap="changeCartQuantity">＋</text>
+              <text class="remove" data-key="{{item.key}}" bindtap="removeCartItem">移除</text>
+            </view>
+          </view>
+        </view>
+        <view wx:if="{{!cart.length}}" class="empty">清单还是空的，先去看看商品和体验吧。</view>
+        <view wx:if="{{cart.length}}" class="cart-bottom">
+          <view>
+            <text>预估金额</text>
+            <text class="cart-total">¥{{cartTotal}}</text>
+          </view>
+          <text wx:if="{{inquiryCount}}" class="cart-tip">另有 {{inquiryCount}} 类待询价项目未计入金额</text>
+          <button class="ghost-button" bindtap="clearCart">清空清单</button>
+          <button class="primary-button" bindtap="saveIntention">保存选购意向</button>
+        </view>
+      </view>
+      <view wx:else class="shop-page">
+        <view class="shop-intro">
+          <text class="page-kicker">NUO YI SELECT</text>
+          <text class="page-title">傩韵集</text>
+          <text class="page-subtitle">把面具的线条、舞台的光和手作的温度，带进日常。</text>
+        </view>
+        <view class="search-bar shop-search">
+          <text class="search-icon">⌕</text>
+          <input value="{{keyword}}" placeholder="搜索商品或体验" bindinput="onSearchInput" confirm-type="search" bindconfirm="search" />
+          <text wx:if="{{keyword}}" class="clear" bindtap="clearSearch">×</text>
+          <button bindtap="search">搜索</button>
+        </view>
+        <view class="shop-toolbar">
+          <scroll-view class="chips shop-chips" scroll-x>
+            <view wx:for="{{shopCategories}}" wx:key="*this" class="chip {{activeCategory == item ? 'chip-active' : ''}}" data-value="{{item}}"
+              bindtap="selectCategory">{{item}}</view>
+          </scroll-view>
+          <view class="shop-actions">
+            <text bindtap="changeSort">{{sort}} ↕</text>
+            <text bindtap="openCart">清单 <text class="cart-badge">{{cartCount}}</text>
+            </text>
+          </view>
+        </view>
+        <view class="product-grid shop-grid">
+          <view wx:for="{{visibleProducts}}" wx:key="id" class="product-card" data-id="{{item.id}}" bindtap="showProduct">
+            <image src="{{item.image}}" mode="aspectFill" />
+            <view class="product-card-info">
+              <text class="product-tag">{{item.category}}</text>
+              <text class="product-name">{{item.name}}</text>
+              <text class="product-description">{{item.description}}</text>
+              <view class="product-card-foot">
+                <text class="product-price">{{item.priceLabel}}</text>
+                <text class="arrow">›</text>
+              </view>
+            </view>
+          </view>
+        </view>
+        <view wx:if="{{!visibleProducts.length}}" class="empty">没有找到匹配的商品，换个关键词试试。</view>
+        <view class="shop-footnote">
+          <text>购买说明</text>
+          <text>当前为产品与服务意向展示。价格、材质、库存、活动日期及交付方式，以后续确认信息为准。</text>
+        </view>
+      </view>
     </block>
 
     <block wx:if="{{current == 3}}">
-      <view class="community"><view class="module-intro"><text class="module-title">傩友交流</text><text class="module-subtitle">分享你的傩文化见闻与创作</text></view>
-        <view class="posts"><view class="post" wx:for="{{posts}}" wx:key="id"><view class="post-title">{{item.author}} <text class="date">{{item.date}}</text></view><text class="post-text">{{item.title}}</text><view wx:if="{{item.images.length}}" class="post-images"><image wx:for="{{item.images}}" wx:key="*this" src="{{item}}" mode="aspectFill"/></view><view class="comment-list"><view wx:for="{{item.commentList}}" wx:key="index" class="comment"><text class="comment-author">{{item.author}}：</text>{{item.text}}</view></view><view class="comment-input"><input placeholder="写下你的评论..." value="{{commentDrafts[index] || ''}}" data-index="{{index}}" bindinput="onCommentInput" bindconfirm="addComment" confirm-type="send"/><button data-index="{{index}}" bindtap="addComment">发送</button></view></view></view>
-        <view class="compose"><text class="compose-title">分享这一刻</text><textarea value="{{composeText}}" placeholder="说说你对傩戏文化的见闻、感受或创作..." maxlength="500" bindinput="onComposeInput"></textarea><view wx:if="{{composeImages.length}}" class="compose-images"><view wx:for="{{composeImages}}" wx:key="*this" class="compose-image"><image src="{{item}}" mode="aspectFill"/><text data-index="{{index}}" bindtap="removeComposeImage">×</text></view></view><view class="compose-actions"><button bindtap="choosePostImage">＋ 图片</button><button class="publish" bindtap="publishPost">发布</button></view></view>
+      <view class="community-page">
+        <view class="page-intro community-intro">
+          <text class="page-kicker">NUO YI COMMUNITY</text>
+          <text class="page-title">傩友交流</text>
+          <text class="page-subtitle">把看到的、做出的和想尝试的，分享给同样好奇的人。</text>
+        </view>
+        <text wx:if="{{cloudReady}}" class="local-note">社区动态、评论和喜欢同步到微信云端账号</text>
+        <text wx:else class="local-note">社区互动会保存在本机；配置云端后可同步到微信账号</text>
+        <view class="community-stats">
+          <view>
+            <text>{{posts.length}}</text>
+            <text>条动态</text>
+          </view>
+          <view>
+            <text>{{myPostCount}}</text>
+            <text>我的分享</text>
+          </view>
+          <view>
+            <text>3</text>
+            <text>个话题</text>
+          </view>
+        </view>
+        <view class="topic-bar">
+          <scroll-view class="chips" scroll-x>
+            <view wx:for="{{topics}}" wx:key="*this" class="chip {{topic == item ? 'chip-active' : ''}}" data-value="{{item}}" bindtap="selectTopic">{{item}}</view>
+          </scroll-view>
+          <button bindtap="openCompose">{{composeOpen ? '收起发布' : '＋ 分享一刻'}}</button>
+        </view>
+        <view wx:if="{{composeOpen}}" class="compose">
+          <textarea value="{{composeText}}" placeholder="说说你的傩文化见闻、感受或创作..." maxlength="500" bindinput="onComposeInput">
+          </textarea>
+          <view class="compose-topics">
+            <text wx:for="{{topics}}" wx:if="{{index > 0}}" wx:key="*this" class="compose-chip {{composeTopic == item ? 'compose-chip-active' : ''}}"
+              data-value="{{item}}" bindtap="selectComposeTopic">#{{item}}</text>
+          </view>
+          <view wx:if="{{composeImages.length}}" class="compose-images">
+            <view wx:for="{{composeImages}}" wx:key="*this" class="compose-image">
+              <image src="{{item}}" mode="aspectFill" />
+              <text data-index="{{index}}" bindtap="removeComposeImage">×</text>
+            </view>
+          </view>
+          <view class="compose-actions">
+            <button bindtap="choosePostImage">＋ 添加图片</button>
+            <button class="primary-button" loading="{{publishing}}" bindtap="publishPost">发布动态</button>
+          </view>
+        </view>
+        <view class="posts">
+          <view wx:for="{{visiblePosts}}" wx:key="id" class="post-card">
+            <view class="post-head">
+              <view class="post-avatar">{{item.seed ? "傩" : "友"}}</view>
+              <view>
+                <text class="post-author">{{item.author}}</text>
+                <text class="post-meta">{{item.topic}} · {{item.date}}</text>
+              </view>
+              <text wx:if="{{!item.seed}}" class="post-delete" data-id="{{item.id}}" bindtap="deletePost">···</text>
+            </view>
+            <text class="post-title">{{item.title}}</text>
+            <view wx:if="{{item.images.length}}" class="post-images">
+              <image wx:for="{{item.images}}" wx:for-item="postImage" wx:key="*this" src="{{postImage}}" mode="aspectFill" data-src="{{postImage}}"
+                data-post="{{item.id}}" bindtap="previewImage" />
+            </view>
+            <view class="post-actions">
+              <text data-id="{{item.id}}" bindtap="toggleLike">{{item.liked ? '♥' : '♡'}} {{item.liked ? '已喜欢' : '喜欢'}} {{item.likeCount || 0}}</text>
+              <text>{{item.commentCount || item.commentList.length}} 条评论</text>
+            </view>
+            <view wx:if="{{item.commentList.length}}" class="comment-list">
+              <view wx:for="{{item.commentList}}" wx:for-item="cmt" wx:key="id" class="comment-row">
+                <text class="comment-author">{{cmt.author}}：</text>{{cmt.text}}
+                <text wx:if="{{cmt.isOwner}}" class="comment-del" data-id="{{cmt.id}}" bindtap="deleteComment">删除</text>
+              </view>
+            </view>
+            <view class="comment-input">
+              <input maxlength="200" value="{{commentDrafts[item.id] || ''}}" placeholder="写下你的评论..." data-id="{{item.id}}" bindinput="onCommentInput"
+                bindconfirm="addComment" confirm-type="send" />
+              <button data-id="{{item.id}}" bindtap="addComment">发送</button>
+            </view>
+          </view>
+        </view>
       </view>
     </block>
 
     <block wx:if="{{current == 4}}">
-      <view wx:if="{{isLoggedIn}}" class="profile"><image src="{{avatarDisplay}}" class="profile-avatar"/><text class="welcome">傩艺体验员</text><text class="profile-account">{{loggedAccount}}</text><text>欢迎回来，继续探索非遗魅力</text><button class="avatar-button" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">设置头像</button><button class="logout-button" bindtap="logout">退出登录</button></view>
-      <view wx:else class="auth-page"><view class="auth-brand">傩艺</view><text class="auth-subtitle">登录后收藏内容，参与傩友交流</text><view class="auth-tabs"><text wx:if="{{authMode == 'login'}}" class="auth-tab auth-active" bindtap="switchAuthMode" data-mode="login">账号登录</text><text wx:else class="auth-tab" bindtap="switchAuthMode" data-mode="login">账号登录</text><text wx:if="{{authMode == 'register'}}" class="auth-tab auth-active" bindtap="switchAuthMode" data-mode="register">注册账号</text><text wx:else class="auth-tab" bindtap="switchAuthMode" data-mode="register">注册账号</text></view><input class="auth-input" placeholder="请输入账号" value="{{authAccount}}" data-field="authAccount" bindinput="onAuthInput"/><input class="auth-input" placeholder="请输入密码（至少 6 位）" password value="{{authPassword}}" data-field="authPassword" bindinput="onAuthInput"/><input wx:if="{{authMode == 'register'}}" class="auth-input" placeholder="请再次输入密码" password value="{{authConfirmPassword}}" data-field="authConfirmPassword" bindinput="onAuthInput"/><button class="auth-submit" bindtap="submitAuth"><text wx:if="{{authMode == 'login'}}">登录</text><text wx:else>注册并登录</text></button><button wx:if="{{authMode == 'login'}}" class="wechat-submit" bindtap="wechatLogin">微信快捷登录</button><text wx:if="{{authMessage}}" class="auth-message">{{authMessage}}</text><text class="auth-tip">云服务未配置时，账号仅保存在当前设备</text></view>
+      <view class="profile-page">
+        <view wx:if="{{!isLoggedIn}}" class="login-page">
+          <text class="login-seal">傩</text>
+          <text class="login-title">登录傩艺</text>
+          <text class="login-subtitle">{{cloudReady ? '用微信身份保存头像昵称，开启你的傩艺之旅' : '创建仅保存在本机的体验资料，开启你的傩艺之旅'}}</text>
+          <button class="wechat-button" loading="{{authBusy}}" bindtap="wechatLogin">{{cloudReady ? '微信云端登录' : '开启本机体验'}}</button>
+          <text wx:if="{{cloudReady}}" class="login-or">收藏保存在本机，社区与选购清单保存在云端</text>
+          <text wx:else class="login-or">本机模式：资料、社区互动、清单和意向仅保存在当前设备</text>
+          <text wx:if="{{authMessage}}" class="auth-message">{{authMessage}}</text>
+          <view class="login-help">
+            <text>头像和昵称将在你主动编辑资料时填写</text>
+            <text>你可以继续以访客身份探索内容</text>
+          </view>
+        </view>
+        <view wx:if="{{isLoggedIn}}" class="profile-hero">
+          <view class="profile-avatar-wrap">
+            <image src="{{avatarDisplay}}" class="profile-avatar" />
+            <text class="profile-seal">傩</text>
+          </view>
+          <text class="profile-name">{{user.nickName || '傩友'}}</text>
+          <text class="profile-account">{{user.account || (cloudReady ? '微信云端用户' : '本机体验资料')}}</text>
+          <text class="profile-welcome">愿每一次打开，都有新的发现。</text>
+          <button class="outline-button" bindtap="editProfile">{{profileEditing ? '收起编辑' : '编辑资料'}}</button>
+        </view>
+        <view wx:if="{{profileEditing}}" class="profile-edit">
+          <button class="choose-avatar" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+            <image src="{{avatarDisplay}}" />
+            <text>点击更换头像</text>
+          </button>
+          <form bindsubmit="saveProfile">
+            <input name="nickname" type="nickname" value="{{nicknameDraft}}" placeholder="请输入昵称" maxlength="20" bindinput="onNicknameInput"
+              bindblur="onNicknameInput" bindnicknamereview="onNicknameReview" />
+            <button class="primary-button" loading="{{profileBusy}}" form-type="submit" disabled="{{profileBusy}}">保存云端资料</button>
+          </form>
+          <text class="edit-tip">头像会先上传到云存储，昵称与头像将绑定当前微信身份。</text>
+        </view>
+        <view class="profile-menu">
+          <view class="profile-menu-row" data-panel="favorites" bindtap="showProfilePanel">
+            <text>☆</text>
+            <view>
+              <text>我的收藏</text>
+              <text>{{favoriteCount}} 篇专题 · 保存在本机</text>
+            </view>
+            <text class="arrow">›</text>
+          </view>
+          <view class="profile-menu-row" data-panel="intentions" bindtap="showProfilePanel">
+            <text>▱</text>
+            <view>
+              <text>选购意向</text>
+              <text wx:if="{{cloudReady}}">{{intentions.length}} 份云端记录</text>
+              <text wx:else>{{intentions.length}} 份本机记录</text>
+            </view>
+            <text class="arrow">›</text>
+          </view>
+          <view class="profile-menu-row" data-panel="about" bindtap="showProfilePanel">
+            <text>◎</text>
+            <view>
+              <text>关于傩艺</text>
+              <text>文化导览 · 数字创意 · 社区共创</text>
+            </view>
+            <text class="arrow">›</text>
+          </view>
+        </view>
+        <view wx:if="{{profilePanel == 'favorites'}}" class="profile-panel">
+          <text class="panel-title">我的收藏</text>
+          <view wx:for="{{favorites}}" wx:key="id" class="panel-row" data-id="{{item.id}}" bindtap="openArticle">
+            <text>{{item.title}}</text>
+            <text class="arrow">›</text>
+          </view>
+          <text wx:if="{{!favorites.length}}" class="empty">还没有收藏，读到喜欢的专题就点一下星标。</text>
+        </view>
+        <view wx:if="{{profilePanel == 'intentions'}}" class="profile-panel">
+          <text class="panel-title">选购意向</text>
+          <view wx:for="{{intentions}}" wx:key="id" class="intention-row">
+            <text>{{item.date}} · {{item.items.length}} 件</text>
+            <text>{{item.inquiryCount ? '含待询价项目' : '预估 ¥' + item.total}}</text>
+            <view class="intention-items">
+              <text wx:for="{{item.items}}" wx:for-item="chosen" wx:key="key">{{chosen.name}} · {{chosen.spec}} × {{chosen.quantity}}</text>
+            </view>
+            <text class="intention-del" data-id="{{item.id}}" bindtap="deleteIntention">删除这份意向</text>
+          </view>
+          <text wx:if="{{!intentions.length}}" class="empty">还没有保存过选购意向。</text>
+        </view>
+        <view wx:if="{{profilePanel == 'about'}}" class="profile-panel about">
+          <text class="panel-title">关于傩艺</text>
+          <text>傩艺希望把非遗文化变得更容易亲近：用图文讲清故事，用文创回应生活，用社区留下每个人的观察。</text>
+          <text>页面中的产品和服务包含项目设计方向与素材参考，未确认的价格、库存和场次会标注为“待询价”。</text>
+        </view>
+        <button wx:if="{{isLoggedIn}}" class="logout-button" bindtap="logout">退出当前设备</button>
+      </view>
     </block>
   </view>
-  <view class="tabbar"><view wx:for="{{tabs}}" wx:key="label" class="tab" data-index="{{index}}" bindtap="switchTab"><image class="tab-icon" src="{{item.icon}}" mode="aspectFit"/><text>{{item.label}}</text></view></view>
+
+  <view class="tabbar">
+    <view wx:for="{{tabs}}" wx:key="label" class="tab {{current == index ? 'tab-active' : ''}}" data-index="{{index}}" bindtap="switchTab">
+      <view class="tab-icon-wrap">
+        <image src="{{item.icon}}" mode="aspectFit" />
+        <text wx:if="{{index == 2 && cartCount}}" class="tab-badge">{{cartCount}}</text>
+      </view>
+      <text>{{item.label}}</text>
+    </view>
+  </view>
 </view>
